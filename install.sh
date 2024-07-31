@@ -1,14 +1,15 @@
-# conda remove -n tram --all -y
-# conda create -n tram python=3.10 -y
-# conda activate tram
+set -x
+# mamba remove -n tram --all -y
+# mamba create -n tram python=3.10 -y
+# mamba activate tram
 
-conda install nvidia/label/cuda-11.8.0::cuda-toolkit -y # you can disable this if you already have cuda-11.8
-conda install pytorch==2.0.0 torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y
+# mamba install nvidia/label/cuda-11.8.0::cuda-toolkit -y # you can disable this if you already have cuda-11.8
+mamba install pytorch==2.0.0 torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y
 pip install 'git+https://github.com/facebookresearch/detectron2.git@a59f05630a8f205756064244bf5beb8661f96180'
 pip install "git+https://github.com/facebookresearch/pytorch3d.git@stable"
 
-conda install pytorch-scatter -c pyg
-conda install -c conda-forge suitesparse
+mamba install -c pyg pytorch-scatter=2.1.2=py310_torch_2.0.0_cu118
+mamba install -c conda-forge suitesparse
 
 pip install pulp
 pip install supervision
