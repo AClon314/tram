@@ -20,20 +20,17 @@ pushd $self_dir
 cmd1="ls $out_dir/tracks.npy"
 cmd2="ls $out_dir/masked_droid_slam.npz"
 cmd3="ls $out_dir/hps"
-rm $out_dir ; ln -sf $vd_dir $out_dir  #soft link
+rm -r $out_dir ; ln -sf $vd_dir $out_dir  #soft link
 
 set -x
-# 1. Run detection, segmentation and multi-person tracking
-$cmd1 2>/dev/null || python scripts/detect_track_video.py --video "$vd" --visualization && \ 
+# 1. Run Masked Droid SLAM (also detect+track humans in this step)
+python scripts/estimate_camera.py --video "$vd" --static_camera && \
 
-# 2. Run Masked DROID-SLAM, estimate a focal length
-$cmd2 2>/dev/null || python scripts/slam_video.py --video "$vd" $img_focal && \
+# 2. Run 4D human capture with VIMO.
+$cmd3 2>/dev/null || python scripts/estimate_humans.py --video "$vd" && \
 
-# 3. Run 4D human capture with VIMO.
-$cmd3 2>/dev/null || python scripts/vimo_video.py --video "$vd" && \
-
-# 4. Put everything together. Render the output video.
-python scripts/tram_video.py --video "$vd" || (
+# 3. Put everything together. Render the output video.
+python scripts/visualize_tram.py.py --video "$vd" || (
   set +x
   echo
   echo "💡 Tip of known error"
