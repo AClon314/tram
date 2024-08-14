@@ -8,7 +8,7 @@ fi
 
 trap "set +x && echo ❗ dont forgot: mamba activate tram" EXIT
 
-[[ -n "$2" ]] && img_focal="--img_focal $2"
+[[ -n "$2" ]] && args="--static_camera"
 vd="$(readlink -f $1)"
 out_dir="$(basename $1 | sed 's/\.[^.]*$//')"
 mkdir -p $out_dir
@@ -20,14 +20,14 @@ pushd $self_dir
 cmd1="ls $out_dir/tracks.npy"
 cmd2="ls $out_dir/masked_droid_slam.npz"
 cmd3="ls $out_dir/hps"
-rm -r $out_dir ; ln -sf $vd_dir $out_dir  #soft link
+# rm -r $out_dir ; ln -sf $vd_dir $out_dir  #soft link
 
 set -x
 # 1. Run Masked Droid SLAM (also detect+track humans in this step)
-python scripts/estimate_camera.py --video "$vd" --static_camera && \
+python scripts/estimate_camera.py --video "$vd" $args && \
 
 # 2. Run 4D human capture with VIMO.
-$cmd3 2>/dev/null || python scripts/estimate_humans.py --video "$vd" && \
+python scripts/estimate_humans.py --video "$vd" && \
 
 # 3. Put everything together. Render the output video.
 python scripts/visualize_tram.py.py --video "$vd" || (
