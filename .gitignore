@@ -8,6 +8,7 @@ data/smpl/SMPL_*.pkl
 *.mp4
 example_video/
 results/
+results
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
