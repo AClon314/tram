@@ -15,7 +15,9 @@ parser.add_argument('--video', type=str, default='./example_video.mov', help='in
 
 args = parser.parse_args()
 
-video = args.video
+video = os.path.abspath(args.video)
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 pys = ['estimate_camera','estimate_humans','visualize_tram']
 for py in pys:
     ret = subprocess.run(['python',f'scripts/{py}.py','--video',video]).returncode
@@ -24,4 +26,3 @@ for py in pys:
 
 os.chdir(f'results/{video}')
 ret = subprocess.run([f"tar -czvf {video}.tar.gz --exclude='./images' --exclude='./Annotations' --exclude='./tram_output.mp4' ./*"]).returncode
-
