@@ -29,14 +29,17 @@ results_path=os.getcwd()+'/results'
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 if not os.path.exists('results'):
     os.symlink(results_path,'results')
+results_path=f'{results_path}/{video_name}'
 
-pys = [['estimate_camera','tracks.npy'],['estimate_humans','hps'],['visualize_tram']]
+pys = [['estimate_camera','tracks.npy'],['estimate_humans','hps'],['visualize_tram','tram_output.mp4']]
 for py in pys:
-    if len(py)>1 and os.path.exists(f'{results_path}/{video_name}/{py[1]}'):
+    if len(py)>1 and os.path.exists(f'{results_path}/{py[1]}'):
+        print(f'skip: {py[0]}')
         continue
     ret = subprocess.run(['python',f'scripts/{py[0]}.py','--video',video_path],check=True).returncode
     if ret != 0:
         sys.exit()
 
-os.chdir(f'{results_path}/{video_name}')
-ret = subprocess.run([f"tar -czvf {video_path}.tar.gz --exclude='./images' --exclude='./Annotations' --exclude='./tram_output.mp4' ./*"],check=True).returncode
+os.chdir(f'{results_path}')
+cmd=f"""tar -jcvf {video_name}.tar.bz2 hps tram_output.mp4 boxes.npy camera.npy masks.npy tracks.npy"""
+ret = subprocess.run(cmd.split(' '),check=True).returncode
