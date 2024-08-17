@@ -16,7 +16,10 @@ parser.add_argument('--video', type=str, default='./example_video.mov', help='in
 args = parser.parse_args()
 
 video = os.path.abspath(args.video)
+os.makedirs(f'results',exist_ok=True)
+cwd=os.getcwd()+'/results'
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+subprocess.run(['ln','-s',cwd,f'results'])
 
 pys = ['estimate_camera','estimate_humans','visualize_tram']
 for py in pys:
@@ -24,5 +27,5 @@ for py in pys:
     if ret != 0:
         exit(1)
 
-os.chdir(f'results/{video}')
+os.chdir(f'{cwd}/{os.path.basename(video).split(".")[0]}')
 ret = subprocess.run([f"tar -czvf {video}.tar.gz --exclude='./images' --exclude='./Annotations' --exclude='./tram_output.mp4' ./*"]).returncode
