@@ -1,15 +1,12 @@
 import numpy as np
 import os
 import torch
-import cv2
 from tqdm import tqdm
 from glob import glob
-import imageio
 import pygltflib as gl
 
 from lib.vis.traj import *
 from lib.models.smpl import SMPL
-from lib.vis.renderer import Renderer
 
 def export_tram(seq_folder, contact_frames=None):
     img_folder = f'{seq_folder}/images'
@@ -92,7 +89,8 @@ def export_tram(seq_folder, contact_frames=None):
     locations = torch.einsum('ij,bj->bi', R, locations) - offset
     cx, cz = (locations.max(0)[0] + locations.min(0)[0])[[0, 2]] / 2.0
     sx, sz = (locations.max(0)[0] - locations.min(0)[0])[[0, 2]]
-    scale = max(sx.item(), sz.item()) * floor_scale
+    scale = max(sx.item(), sz.item()) * 3
+    #  scale = max(sx.item(), sz.item()) * floor_scale
 
     ##### Viewing Camera #####
     pred_cam = np.load(f'{seq_folder}/camera.npy', allow_pickle=True).item()
@@ -104,10 +102,10 @@ def export_tram(seq_folder, contact_frames=None):
     cam_R = cam_R.mT
     cam_T = - torch.einsum('bij,bj->bi', cam_R, cam_T)
 
-    cam_R = cam_R.to('cuda')
-    cam_T = cam_T.to('cuda')
+    # cam_R = cam_R.to('cuda')
+    # cam_T = cam_T.to('cuda')
 
-    # Add camera
+    # TEST
     data = np.load(f'{seq_folder}/camera.npy', allow_pickle=True).item()
     focal_pixels = data['img_focal']-100
 
@@ -118,13 +116,23 @@ def export_tram(seq_folder, contact_frames=None):
             print(f'{k}={data[k]}')
 
     print(data['pred_cam_R'][0], data['pred_cam_T'][0])
+    print(cam_R[0], cam_T[0])
 
-
-    # with open(f'{output_dir}/camera.json', 'w',encoding='UTF-8') as f:
-    #     f.write(str(data))
-
+    """Add Camera to GLTF"""
+    gl_folder = f'{seq_folder}/gltf'
     gltf = gl.GLTF2()
+    scene = gl.Scene()
+    gltf.scenes.append(scene)
     cam = gl.Camera()
+    # with open(f'{gl_folder}/camera_R.json', 'w',encoding='UTF-8') as f:
+    #     f.write(str(cam_R))
+    # with open(f'{gl_folder}/camera_T.json', 'w',encoding='UTF-8') as f:
+    #     f.write(str(cam_T))
+    # np.save(f'{gl_folder}/cam_R.npy',cam_R.cpu())
+    # np.save(f'{gl_folder}/cam_T.npy',cam_T.cpu())
+
+    ani=gl.Animation(name='CameraAction')
+    
     # Add persons
     # for npy in os.listdir(hps_folder):
     #     # print(npy)

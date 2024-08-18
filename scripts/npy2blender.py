@@ -1,7 +1,7 @@
-# pylint: disable=bad-indentation, wrong-import-position
 import argparse
 import sys
 import os
+from glob import glob
 
 sys.path.insert(0, os.path.dirname(__file__) + '/..')
 
@@ -13,7 +13,7 @@ parser.add_argument('--ground_estimate', type=int, default=[10, -10], nargs='+',
 args = parser.parse_args()
 
 import numpy as np
-from lib.pipeline import export_tram
+from lib.pipeline.export import export_tram
 
 # File and folders
 video = args.video
