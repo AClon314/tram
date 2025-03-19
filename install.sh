@@ -4,11 +4,14 @@ set -x
 # mamba activate tram
 
 # mamba install nvidia/label/cuda-11.8.0::cuda-toolkit -y # you can disable this if you already have cuda-11.8
-mamba install pytorch==2.0.0 torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y
+mamba install pytorch==2.4.0 torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y
+pip install torch==2.4.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install pytorch-lightning
 pip install 'git+https://github.com/facebookresearch/detectron2.git@a59f05630a8f205756064244bf5beb8661f96180'
 pip install "git+https://github.com/facebookresearch/pytorch3d.git@stable"
+pip install torch-scatter -f https://data.pyg.org/whl/torch-2.4.0+cu118.html
 
-mamba install -c pyg pytorch-scatter=2.1.2=py310_torch_2.0.0_cu118
+# mamba install -c pyg pytorch-scatter=2.1.2=py310_torch_2.0.0_cu118
 mamba install -c conda-forge suitesparse
 
 pip install pulp
@@ -17,7 +20,7 @@ pip install supervision
 pip install open3d
 pip install opencv-python
 pip install loguru
-pip install chumpy
+pip install git+https://github.com/mattloper/chumpy
 pip install einops
 pip install plyfile
 pip install pyrender
@@ -30,4 +33,6 @@ pip install pytorch-minimize
 pip install imageio[ffmpeg]
 pip install numpy==1.23
 pip install gdown
+pip install openpyxl
+# pip install git+https://github.com/princeton-vl/lietorch.git
 
